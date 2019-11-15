@@ -1,0 +1,125 @@
+> db.createCollection("library")
+
+{ "ok" : 1 }
+
+>  db.library.insertMany([
+...  { book:"ABC",instock: [ {shell:"A",qty:15} ,{shell:"B",qty:10} ]},
+...  {book:"XYZ",instock:{shell:"B",qty:5}},
+...  {book:"PQR",instock:[{shell:"c",qty:20},{shell:"A",qty:4},{shell:"B",qty:5}]},
+...  {book:"LMN",instock:{shell:"C",qty:12}},
+...  {book:"HIJ",instock:[{shell:"A",qty:3},{shell:"B",qty:6}]}
+... ]) 
+{
+	"acknowledged" : true,
+	"insertedIds" : [
+			ObjectId("5b8f8dd5ae00cfbd00733750"),
+			ObjectId("5b8f8dd5ae00cfbd00733751"),
+			ObjectId("5b8f8dd5ae00cfbd00733752"),
+			ObjectId("5b8f8dd5ae00cfbd00733753"),
+			ObjectId("5b8f8dd5ae00cfbd00733754")
+	]
+}
+
+> db.library.find().pretty();
+{
+	"_id" : ObjectId("5b8f8dd5ae00cfbd00733750"),
+	"book" : "ABC",
+	"instock" : [
+		{
+			"shell" : "A",
+			"qty" : 15
+		},
+		{
+			"shell" : "B",
+			"qty" : 10
+		}
+	]
+}
+{
+	"_id" : ObjectId("5b8f8dd5ae00cfbd00733751"),
+	"book" : "XYZ",
+	"instock" : {
+		"shell" : "B",
+		"qty" : 5
+	}
+}
+{
+	"_id" : ObjectId("5b8f8dd5ae00cfbd00733752"),
+	"book" : "PQR",
+	"instock" : [
+		{
+			"shell" : "c",
+			"qty" : 20
+		},
+		{
+			"shell" : "A",
+			"qty" : 4
+		},
+		{
+			"shell" : "B",
+			"qty" : 5
+		}
+	]
+}
+{
+	"_id" : ObjectId("5b8f8dd5ae00cfbd00733753"),
+	"book" : "LMN",
+	"instock" : {
+		"shell" : "C",
+		"qty" : 12
+	}
+}
+{
+	"_id" : ObjectId("5b8f8dd5ae00cfbd00733754"),
+	"book" : "HIJ",
+	"instock" : [
+		{
+			"shell" : "A",
+			"qty" : 3
+		},
+		{
+			"shell" : "B",
+			"qty" : 6
+		}
+	]
+}
+
+> 
+
+******QUERY FOR DOCUMENT NESTED IN ARRAY************
+
+	(1) select all documents where an element in the instock array matches the specified document 
+	> db.library.find( {"instock" :{"shell" :"C","qty" : 12}} )
+	  { "_id" : ObjectId("5b8f8dd5ae00cfbd00733753"), "book" : "LMN", "instock" : { "shell" : "C", "qty" : 12 } }
+	
+	
+	(2) select all documents where the instock array has at least one embedded document that contains the field qty whose value is greater 		    than or equal to 20:
+	> db.library.find( { 'instock.qty' : { $gte:20 } } ) 
+	  { "_id" : ObjectId("5b8f8dd5ae00cfbd00733752"), "book" : "PQR", "instock" : [ { "shell" : "c", "qty" : 20 }, { "shell" : "A", "qty" : 	  4 }, { "shell" : "B", "qty" : 5 } ] }
+
+	(3) select all documents where the instock array has as its first element a document that contains the field qty whose value is greater 	    than or equal to 20
+	> db.library.find( {'instock.0.qty':{$gte:20}} )
+	  { "_id" : ObjectId("5b8f8dd5ae00cfbd00733752"), "book" : "PQR", "instock" : [ { "shell" : "c", "qty" : 20 }, { "shell" : "A", "qty" : 	  4 }, { "shell" : "B", "qty" : 5 } ] }
+
+
+***********MULTIPLE CONDITIONS FOR ARRAY**************
+
+	(1) select documents where the instock array has at least one embedded document that contains both the field qty equal to 5 and the field 		    shell equal to A:
+	> db.library.find( { "instock": { $elemMatch : { qty:5 , shell:"B"}}})
+	  { "_id" : ObjectId("5b8f8dd5ae00cfbd00733752"), "book" : "PQR", "instock" : [ { "shell" : "c", "qty" : 20 }, { "shell" : "A", "qty" : 	  4 }, { "shell" : "B", "qty" : 5 } ] }
+	  
+        (2) select documents where the instock array has at least one embedded document that contains the field qty that is greater than         		    10 and less than or equal to 20:
+       	>  db.library.find( { "instock": { $elemMatch: { qty: { $gt: 10, $lte: 20 } } } } )
+	{ "_id" : ObjectId("5b8f8dd5ae00cfbd00733750"), "book" : "ABC", "instock" : [ { "shell" : "A", "qty" : 15 }, { "shell" : "B", "qty" : 		10 } ] }
+	{ "_id" : ObjectId("5b8f8dd5ae00cfbd00733752"), "book" : "PQR", "instock" : [ { "shell" : "c", "qty" : 20 }, { "shell" : "A", "qty" : 		4 }, { "shell" : "B", "qty" : 5 } ] }
+
+	(3) select documents where any document nested in the instock array has the qty field greater than 10 and any document in the array has 	    the qty field less than or equal to 20:
+	> db.library.find( {'instock.qty' : {$gt:10, $lte:20} } )
+	{ "_id" : ObjectId("5b8f8dd5ae00cfbd00733750"), "book" : "ABC", "instock" : [ { "shell" : "A", "qty" : 15 }, { "shell" : "B", "qty" : 		10 } ] }
+	{ "_id" : ObjectId("5b8f8dd5ae00cfbd00733752"), "book" : "PQR", "instock" : [ { "shell" : "c", "qty" : 20 }, { "shell" : "A", "qty" : 		4 }, { "shell" : "B", "qty" : 5 } ] }
+	{ "_id" : ObjectId("5b8f8dd5ae00cfbd00733753"), "book" : "LMN", "instock" : { "shell" : "C", "qty" : 12 } }
+
+	(4) select  documents where the instock array has at least one embedded document that contains the field qty equal to 5 and at least one 	     embedded document that contains the field shell equal to A:
+	> db.library.find( { 'instock.qty':5 , 'instock.shell':"A" } )
+	{ "_id" : ObjectId("5b8f8dd5ae00cfbd00733752"), "book" : "PQR", "instock" : [ { "shell" : "c", "qty" : 20 }, { "shell" : "A", "qty" : 		4 }, { "shell" : "B", "qty" : 5 } ] }
+

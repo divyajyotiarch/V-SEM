@@ -1,0 +1,93 @@
+> db.createCollection("Project")
+{ "ok" : 1 }
+
+> db.Project.insert(
+... {
+...      proj_id: 101,
+...      proj_name:"ABC",
+...      status: 'Pending'
+... })
+WriteResult({ "nInserted" : 1 })
+> db.Project.insert(
+... {
+...      proj_id: 102,
+...      proj_name:"XYZ",
+...      status: 'complete'
+... })
+WriteResult({ "nInserted" : 1 })
+> db.Project.insert(
+... {
+...      proj_id: 103,
+...      proj_name:"LMN",
+...      status: 'complete'
+... })
+WriteResult({ "nInserted" : 1 })
+> db.Project.insert(
+... {
+...      proj_id: 105,
+...      proj_name:"PQR",
+...      status: 'complete'
+... })
+WriteResult({ "nInserted" : 1 })
+> db.Project.insert(
+... {
+...      proj_id: 104,
+...      proj_name:"HIJ",
+...      status: 'pending'
+... })
+WriteResult({ "nInserted" : 1 })
+
+> db.Project.find().pretty()
+{
+	"_id" : ObjectId("5b8f9c468e719a4861618194"),
+	"proj_id" : 101,
+	"proj_name" : "ABC",
+	"status" : "Pending"
+}
+{
+	"_id" : ObjectId("5b8f9c688e719a4861618195"),
+	"proj_id" : 102,
+	"proj_name" : "XYZ",
+	"status" : "complete"
+}
+{
+	"_id" : ObjectId("5b8f9c7e8e719a4861618196"),
+	"proj_id" : 103,
+	"proj_name" : "LMN",
+	"status" : "complete"
+}
+{
+	"_id" : ObjectId("5b8f9c928e719a4861618197"),
+	"proj_id" : 105,
+	"proj_name" : "PQR",
+	"status" : "complete"
+}
+{
+	"_id" : ObjectId("5b8f9cad8e719a4861618198"),
+	"proj_id" : 104,
+	"proj_name" : "HIJ",
+	"status" : "pending"
+}
+> db.Project.mapReduce( 
+...    function() { emit(this.proj_id,1); }, 
+... 
+...    function(key, values) {return Array.sum(values)}, {  
+...       query:{status:"complete"},  
+...       out:"Qualified" 
+...    }
+... 
+... )
+{
+	"result" : "Qualified",
+	"timeMillis" : 76,
+	"counts" : {
+		"input" : 3,
+		"emit" : 3,
+		"reduce" : 0,
+		"output" : 3
+	},
+	"ok" : 1
+}
+> 
+
+

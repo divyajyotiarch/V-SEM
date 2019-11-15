@@ -1,0 +1,49 @@
+> use te3177db
+switched to db te3177db
+
+> db.createCollection("student")
+{ "ok" : 1 }
+
+> db.createCollection("student")
+{ "ok" : 1 }
+
+>db.student.insert({'rollno:' : 1,'name:' :'A'})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.insert({'rollno:' : 2,'name:' :'B'})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.insert({'rollno:' : 3,'name:' :'C'})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.find()
+{ "_id" : ObjectId("5b84dee1a6581c7ecce099de"), "rollno:" : 1, "name:" : "A" }
+{ "_id" : ObjectId("5b84def1a6581c7ecce099df"), "rollno:" : 2, "name:" : "B" }
+{ "_id" : ObjectId("5b84df08a6581c7ecce099e0"), "rollno:" : 3, "name:" : "C" }
+
+> db.student.insert({'rollno:' : 4,'name:' :'E'})
+WriteResult({ "nInserted" : 1 })
+
+> db.student.find()
+{ "_id" : ObjectId("5b84dee1a6581c7ecce099de"), "rollno:" : 1, "name:" : "A" }
+{ "_id" : ObjectId("5b84def1a6581c7ecce099df"), "rollno:" : 2, "name:" : "B" }
+{ "_id" : ObjectId("5b84df08a6581c7ecce099e0"), "rollno:" : 3, "name:" : "C" }
+{ "_id" : ObjectId("5b84e02a923c34f9fb72ce1e"), "rollno:" : 4, "name:" : "E" }
+
+> db.student.update({'rollno:' : 4},{$set:{'name:' :'D'}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+> db.student.find()
+{ "_id" : ObjectId("5b84dee1a6581c7ecce099de"), "rollno:" : 1, "name:" : "A" }
+{ "_id" : ObjectId("5b84def1a6581c7ecce099df"), "rollno:" : 2, "name:" : "B" }
+{ "_id" : ObjectId("5b84df08a6581c7ecce099e0"), "rollno:" : 3, "name:" : "C" }
+{ "_id" : ObjectId("5b84e02a923c34f9fb72ce1e"), "rollno:" : 4, "name:" : "D" }
+
+> db.student.remove({'rollno:' : 4})
+WriteResult({ "nRemoved" : 1 })
+
+> db.student.find()
+{ "_id" : ObjectId("5b84dee1a6581c7ecce099de"), "rollno:" : 1, "name:" : "A" }
+{ "_id" : ObjectId("5b84def1a6581c7ecce099df"), "rollno:" : 2, "name:" : "B" }
+{ "_id" : ObjectId("5b84df08a6581c7ecce099e0"), "rollno:" : 3, "name:" : "C" }
+
