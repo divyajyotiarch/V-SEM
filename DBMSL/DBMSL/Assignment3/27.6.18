@@ -1,0 +1,306 @@
+[TE1@localhost ~]$ mysql -h 10.10.15.8 -u t3177 -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MySQL connection id is 40
+Server version: 5.5.32 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2015, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MySQL [(none)]> use t3177db
+Database changed
+MySQL [t3177db]> create table student(rollno int,name varchar(20),contact int,dob date,per int);
+Query OK, 0 rows affected (0.11 sec)
+
+MySQL [t3177db]> insert into student(rollno,name,contact,dob,per) values (3177,'divya',9090909090,'1998-04-05',88);
+Query OK, 1 row affected, 1 warning (0.05 sec)
+
+MySQL [t3177db]> describe student
+    -> describe student;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'describe student' at line 2
+MySQL [t3177db]> describe student;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| rollno  | int(11)     | YES  |     | NULL    |       |
+| name    | varchar(20) | YES  |     | NULL    |       |
+| contact | int(11)     | YES  |     | NULL    |       |
+| dob     | date        | YES  |     | NULL    |       |
+| per     | int(11)     | YES  |     | NULL    |       |
++---------+-------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+MySQL [t3177db]> show student;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'student' at line 1
+MySQL [t3177db]> select rollno,name from student
+    -> select rollno,name from student;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select rollno,name from student' at line 2
+MySQL [t3177db]> select rollno,name from student;
++--------+-------+
+| rollno | name  |
++--------+-------+
+|   3177 | divya |
++--------+-------+
+1 row in set (0.00 sec)
+
+
+MySQL [t3177db]> update student set rollno=3177 where name='medha';
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> update student set rollno=3179 where name='tej';
+Query OK, 1 row affected (0.02 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> update student set rollno=3180 where name='joy';
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,contact,dob,per from student;
++--------+-------+------------+------------+------+
+| rollno | name  | contact    | dob        | per  |
++--------+-------+------------+------------+------+
+|   3178 | divya | 2147483647 | 1998-04-05 |   88 |
+|   3177 | medha | 2147483647 | 1998-08-05 |   98 |
+|   3179 | tej   | 2147483647 | 1998-08-07 |   93 |
+|   3180 | joy   | 2147483647 | 1998-06-12 |   66 |
++--------+-------+------------+------------+------+
+4 rows in set (0.00 sec)
+
+MySQL [t3177db]> update student set contact=1234 where name='joy';
+Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,contact,dob,per from student;
++--------+-------+------------+------------+------+
+| rollno | name  | contact    | dob        | per  |
++--------+-------+------------+------------+------+
+|   3178 | divya | 2147483647 | 1998-04-05 |   88 |
+|   3177 | medha | 2147483647 | 1998-08-05 |   98 |
+|   3179 | tej   | 2147483647 | 1998-08-07 |   93 |
+|   3180 | joy   |       1234 | 1998-06-12 |   66 |
++--------+-------+------------+------------+------+
+4 rows in set (0.00 sec)
+
+MySQL [t3177db]> update student set contact=123467 where name='tej';
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,contact,dob,per from student;
++--------+-------+------------+------------+------+
+
+
+
+MySQL [t3177db]> alter table student drop contact;
+Query OK, 6 rows affected (0.25 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,contact,dob,per from student;ERROR 1054 (42S22): Unknown column 'contact' in 'field list'
+MySQL [t3177db]> select rollno,name,dob,per from student;
++--------+-------+------------+------+
+| rollno | name  | dob        | per  |
++--------+-------+------------+------+
+|   3178 | divya | 1998-04-05 |   88 |
+|   3177 | medha | 1998-08-05 |   98 |
+|   3179 | tej   | 1998-08-07 |   93 |
+|   3180 | joy   | 1998-06-12 |   66 |
+|   3135 | neel  | 1996-09-05 |   77 |
+|   3165 | nitin | 1996-10-05 |   57 |
++--------+-------+------------+------+
+6 rows in set (0.00 sec)
+
+MySQL [t3177db]> alter table student add contact;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+MySQL [t3177db]> alter table student add contact real;
+Query OK, 6 rows affected (0.29 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,dob,per,contact from student;
++--------+-------+------------+------+---------+
+| rollno | name  | dob        | per  | contact |
++--------+-------+------------+------+---------+
+|   3178 | divya | 1998-04-05 |   88 |    NULL |
+|   3177 | medha | 1998-08-05 |   98 |    NULL |
+|   3179 | tej   | 1998-08-07 |   93 |    NULL |
+|   3180 | joy   | 1998-06-12 |   66 |    NULL |
+|   3135 | neel  | 1996-09-05 |   77 |    NULL |
+|   3165 | nitin | 1996-10-05 |   57 |    NULL |
++--------+-------+------------+------+---------+
+6 rows in set (0.00 sec)
+
+MySQL [t3177db]> alter table student modify contact big int;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'big int' at line 1
+MySQL [t3177db]> alter table student modify contact bigint;
+Query OK, 6 rows affected (0.25 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+MySQL [t3177db]> delete from student where rollno=3180;
+Query OK, 1 row affected (0.08 sec)
+
+MySQL [t3177db]> select rollno,name,dob,per,contact from student;
++--------+-------+------------+------+---------+
+| rollno | name  | dob        | per  | contact |
++--------+-------+------------+------+---------+
+|   3178 | divya | 1998-04-05 |   88 |    NULL |
+|   3177 | medha | 1998-08-05 |   98 |    NULL |
+|   3179 | tej   | 1998-08-07 |   93 |    NULL |
+|   3135 | neel  | 1996-09-05 |   77 |    NULL |
+|   3165 | nitin | 1996-10-05 |   57 |    NULL |
++--------+-------+------------+------+---------+
+5 rows in set (0.00 sec)
+
+MySQL [t3177db]> update student set contact=9234678909 where rollno=3178;Query OK, 1 row affected (0.04 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> update student set contact=9234678709 where rollno=3177;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> update student set contact=9235678709 where rollno=3135;
+Query OK, 1 row affected (0.08 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> update student set contact=9235678766 where rollno=3165;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> update student set contact=9244678709 where rollno=3179;
+Query OK, 1 row affected (0.06 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,dob,per,contact from student;
++--------+-------+------------+------+------------+
+| rollno | name  | dob        | per  | contact    |
++--------+-------+------------+------+------------+
+|   3178 | divya | 1998-04-05 |   88 | 9234678909 |
+|   3177 | medha | 1998-08-05 |   98 | 9234678709 |
+|   3179 | tej   | 1998-08-07 |   93 | 9244678709 |
+|   3135 | neel  | 1996-09-05 |   77 | 9235678709 |
+|   3165 | nitin | 1996-10-05 |   57 | 9235678766 |
++--------+-------+------------+------+------------+
+5 rows in set (0.00 sec)
+
+MySQL [t3177db]> create table customer(no int,f_name varchar(20),l_name varchar(20),company varchar(20),city varchar(20),contact bigint);
+Query OK, 0 rows affected (0.10 sec)
+
+| rollno | name  | contact    | dob        | per  |
++--------+-------+------------+------------+------+
+|   3178 | divya | 2147483647 | 1998-04-05 |   88 |
+|   3177 | medha | 2147483647 | 1998-08-05 |   98 |
+|   3179 | tej   |     123467 | 1998-08-07 |   93 |
+|   3180 | joy   |       1234 | 1998-06-12 |   66 |
++--------+-------+------------+------------+------+
+4 rows in set (0.01 sec)
+
+MySQL [t3177db]> update student set contact=12346789 where rollno=3177;
+Query OK, 1 row affected (0.03 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,contact,dob,per from student;
++--------+-------+------------+------------+------+
+| rollno | name  | contact    | dob        | per  |
++--------+-------+------------+------------+------+
+|   3178 | divya | 2147483647 | 1998-04-05 |   88 |
+|   3177 | medha |   12346789 | 1998-08-05 |   98 |
+|   3179 | tej   |     123467 | 1998-08-07 |   93 |
+|   3180 | joy   |       1234 | 1998-06-12 |   66 |
++--------+-------+------------+------------+------+
+4 rows in set (0.01 sec)
+
+MySQL [t3177db]> update student set contact=923467890 where rollno=3178;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MySQL [t3177db]> select rollno,name,contact,dob,per from student;
++--------+-------+-----------+------------+------+
+| rollno | name  | contact   | dob        | per  |
++--------+-------+-----------+------------+------+
+|   3178 | divya | 923467890 | 1998-04-05 |   88 |
+|   3177 | medha |  12346789 | 1998-08-05 |   98 |
+|   3179 | tej   |    123467 | 1998-08-07 |   93 |
+|   3180 | joy   |      1234 | 1998-06-12 |   66 |
++--------+-------+-----------+------------+------+
+4 rows in set (0.00 sec)
+
+MySQL [t3177db]> update student set contact=9234678909 where rollno=3178;
+Query OK, 1 row affected, 1 warning (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 1
+
+MySQL [t3177db]> insert into student(rollno,name,contact,dob,per) values (3135,'neel',09090960,'1996-09-05',77);
+Query OK, 1 row affected (0.03 sec)
+
+MySQL [t3177db]> insert into student(rollno,name,contact,dob,per) values (3165,'nitin',079090960,'1996-10-05',57);
+Query OK, 1 row affected (0.04 sec)
+
+MySQL [t3177db]> select rollno,name,contact,dob,per from student;+--------+-------+------------+------------+------+
+| rollno | name  | contact    | dob        | per  |
++--------+-------+------------+------------+------+
+|   3178 | divya | 2147483647 | 1998-04-05 |   88 |
+|   3177 | medha |   12346789 | 1998-08-05 |   98 |
+|   3179 | tej   |     123467 | 1998-08-07 |   93 |
+|   3180 | joy   |       1234 | 1998-06-12 |   66 |
+|   3135 | neel  |    9090960 | 1996-09-05 |   77 |
+|   3165 | nitin |   79090960 | 1996-10-05 |   57 |
++--------+-------+------------+------------+------+
+
+
+MySQL [t3177db]> select no,f_name,l_name,company,city,contact from customer;
+Empty set (0.00 sec)
+
+MySQL [t3177db]> insert into customer(no,f_name,l_name,company,city,contact) values (11,'as','sd','google','pune',12222);
+Query OK, 1 row affected (0.05 sec)
+
+MySQL [t3177db]> insert into customer(no,f_name,l_name,company,city,contact) values (12,'dfr','gsd','google','mumbai',12622),(13,'hhh','jj','fb','bangalore',444455);
+Query OK, 2 rows affected (0.05 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+
+MySQL [t3177db]> select no,f_name,l_name,company,city,contact from customer;+------+--------+--------+---------+-----------+---------+
+| no   | f_name | l_name | company | city      | contact |
++------+--------+--------+---------+-----------+---------+
+|   11 | as     | sd     | google  | pune      |   12222 |
+|   12 | dfr    | gsd    | google  | mumbai    |   12622 |
+|   13 | hhh    | jj     | fb      | bangalore |  444455 |
+|   17 | dhhr   | ffd    | google  | mumbai    |  156622 |
+|   15 | asshh  | hhj    | fb      | pune      |  443355 |
++------+--------+--------+---------+-----------+---------+
+5 rows in set (0.00 sec)
+
+MySQL [t3177db]> select no,f_name,l_name,company,city,contact from customer order by no;
++------+--------+--------+---------+-----------+---------+
+| no   | f_name | l_name | company | city      | contact |
++------+--------+--------+---------+-----------+---------+
+|   11 | as     | sd     | google  | pune      |   12222 |
+|   12 | dfr    | gsd    | google  | mumbai    |   12622 |
+|   13 | hhh    | jj     | fb      | bangalore |  444455 |
+|   15 | asshh  | hhj    | fb      | pune      |  443355 |
+|   17 | dhhr   | ffd    | google  | mumbai    |  156622 |
++------+--------+--------+---------+-----------+---------+
+5 rows in set (0.01 sec)
+
+MySQL [t3177db]> select rollno,name,dob,per,contact from student order by rollno;
++--------+-------+------------+------+------------+
+| rollno | name  | dob        | per  | contact    |
++--------+-------+------------+------+------------+
+|   3135 | neel  | 1996-09-05 |   77 | 9235678709 |
+|   3165 | nitin | 1996-10-05 |   57 | 9235678766 |
+|   3177 | medha | 1998-08-05 |   98 | 9234678709 |
+|   3178 | divya | 1998-04-05 |   88 | 9234678909 |
+|   3179 | tej   | 1998-08-07 |   93 | 9244678709 |
++--------+-------+------------+------+------------+
+5 rows in set (0.00 sec)
+
+MySQL [t3177db]> select no,f_name,l_name,company,city,contact from customer where substring(f_name,1,1)='d' and city='pune' ;
+Empty set (0.01 sec)
+
+MySQL [t3177db]> select no,f_name,l_name,company,city,contact from customer where substring(f_name,1,1)='d' and city='mumbai' ;
++------+--------+--------+---------+--------+---------+
+| no   | f_name | l_name | company | city   | contact |
++------+--------+--------+---------+--------+---------+
+|   12 | dfr    | gsd    | google  | mumbai |   12622 |
+|   17 | dhhr   | ffd    | google  | mumbai |  156622 |
++------+--------+--------+---------+--------+---------+
+2 rows in set (0.01 sec)
+
+

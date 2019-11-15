@@ -1,0 +1,20 @@
+DECLARE
+   right_now DATE := SYSDATE;
+   too_late EXCEPTION;
+BEGIN
+   IF :employee.hiredate < ADD_MONTHS (right_now, 6)
+   THEN
+      RAISE too_late;
+   ELSE
+      :employee.hiredate := right_now;
+   END IF;
+EXCEPTION
+   WHEN too_late
+   THEN
+      DBMS_OUTPUT.PUT_LINE
+         ('You no longer qualify for free air.');
+   WHEN OTHERS
+   THEN
+      DBMS_OUTPUT.PUT_LINE
+         ('Error encountered: ' || SQLCODE);
+END;

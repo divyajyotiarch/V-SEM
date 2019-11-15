@@ -1,0 +1,232 @@
+> db.createCollection("student")
+{ "ok" : 1 }
+> db
+te3177db
+> show dbs
+3263           0.078GB
+3264db         0.078GB
+3265db         0.078GB
+3267db         0.078GB
+3275db         0.078GB
+3353           0.078GB
+3364db         0.078GB
+Student        0.078GB
+Students       0.078GB
+TE3273         0.078GB
+Te3355         0.078GB
+Te3363db       0.078GB
+admin          0.078GB
+local          0.078GB
+localdb        0.078GB
+mongo1db       0.078GB
+mongoTE3269db  0.078GB
+mongoTE3273db  0.078GB
+mongoTE3274db  0.078GB
+mongoTE3276db  0.078GB
+mongoTE3277db  0.078GB
+mongoTE3278db  0.078GB
+mongoTE3279db  0.078GB
+my_data        0.078GB
+t3167db        0.078GB
+t3169          0.078GB
+t3183db        0.078GB
+t3262db        0.078GB
+t3266db        0.078GB
+t3267db        0.078GB
+t3268db        0.078GB
+t3270db        0.078GB
+te3161db       0.078GB
+te3162db       0.078GB
+te3164db       0.078GB
+te3168db       0.078GB
+te3170db       0.078GB
+te3171db       0.078GB
+te3177db       0.078GB
+te3178db       0.078GB
+te3179db       0.078GB
+te3181db       0.078GB
+te3261db       0.078GB
+te3345db       0.078GB
+te3349db       0.078GB
+te3351db       0.078GB
+te3352db       0.078GB
+te3354db       0.078GB
+te3356db       0.078GB
+te3358db       0.078GB
+te3361db       0.078GB
+test           0.078GB
+> show collections
+student
+system.indexes
+> db.student.insert(
+... { "rollno":111,
+... "name":"jim",
+... "mks":25 }
+... )
+WriteResult({ "nInserted" : 1 })
+> db.student.insert(
+... { "rollno":112,
+... "name":"aa",},
+... { "rollno":113,
+... "name":"bb"}
+... )
+WriteResult({ "nInserted" : 1 })
+> db.student.update( 
+... { "rollno":112 },
+... { $set: { "mks":26 } }
+... { upsert: true }
+... )
+2018-08-23T13:24:20.566+0530 E QUERY    SyntaxError: Unexpected token {
+> db.student.update( { "rollno":112 }, { $set: { "mks":26 } }, { upsert: true } )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("5b7e67076f4bbe8fc05e3186"),
+	"rollno" : 111,
+	"name" : "jim",
+	"mks" : 25
+}
+{
+	"_id" : ObjectId("5b7e67856f4bbe8fc05e3187"),
+	"rollno" : 112,
+	"name" : "aa",
+	"mks" : 26
+}
+> db.student.insert( { "rollno":112, "name":"aa"}, { "rollno":113, "name":"bb"} )
+WriteResult({ "nInserted" : 1 })
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("5b7e67076f4bbe8fc05e3186"),
+	"rollno" : 111,
+	"name" : "jim",
+	"mks" : 25
+}
+{
+	"_id" : ObjectId("5b7e67856f4bbe8fc05e3187"),
+	"rollno" : 112,
+	"name" : "aa",
+	"mks" : 26
+}
+{
+	"_id" : ObjectId("5b7e697f6f4bbe8fc05e3188"),
+	"rollno" : 112,
+	"name" : "aa"
+}
+> db.student.remove(
+... { "name":"aa" } )
+WriteResult({ "nRemoved" : 2 })
+> db.student.insert( { "rollno":112, "name":"aa"}, { "rollno":113, "name":"bb"} )
+WriteResult({ "nInserted" : 1 })
+> db.student.remove( { "name":"aa" } )
+WriteResult({ "nRemoved" : 1 })
+> db.student.insert( [{ "rollno":112, "name":"aa"}, { "rollno":113, "name":"bb"} ])
+BulkWriteResult({
+	"writeErrors" : [ ],
+	"writeConcernErrors" : [ ],
+	"nInserted" : 2,
+	"nUpserted" : 0,
+	"nMatched" : 0,
+	"nModified" : 0,
+	"nRemoved" : 0,
+	"upserted" : [ ]
+})
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("5b7e67076f4bbe8fc05e3186"),
+	"rollno" : 111,
+	"name" : "jim",
+	"mks" : 25
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318a"),
+	"rollno" : 112,
+	"name" : "aa"
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318b"),
+	"rollno" : 113,
+	"name" : "bb"
+}
+> db.student.update( { "rollno":112 }, { $set: { "mks":26 } }, { upsert: true } )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.update( { "rollno":113 }, { $set: { "mks":30 } }, { upsert: true } )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.update( { "rollno":113 }, { $set: { "name":"adi" } }, { upsert: true } )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.insert(  { "rollno":112, "name":"bob", "mks":26 } )
+WriteResult({ "nInserted" : 1 })
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("5b7e67076f4bbe8fc05e3186"),
+	"rollno" : 111,
+	"name" : "jim",
+	"mks" : 25
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318a"),
+	"rollno" : 112,
+	"name" : "aa",
+	"mks" : 26
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318b"),
+	"rollno" : 113,
+	"name" : "adi",
+	"mks" : 30
+}
+{
+	"_id" : ObjectId("5b7e6bc46f4bbe8fc05e318c"),
+	"rollno" : 112,
+	"name" : "bob",
+	"mks" : 26
+}
+> db.student.save(
+... { "_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318a"),"_id" : ObjectId("5b7e6bc46f4bbe8fc05e318c") } 
+... )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("5b7e67076f4bbe8fc05e3186"),
+	"rollno" : 111,
+	"name" : "jim",
+	"mks" : 25
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318a"),
+	"rollno" : 112,
+	"name" : "aa",
+	"mks" : 26
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318b"),
+	"rollno" : 113,
+	"name" : "adi",
+	"mks" : 30
+}
+{ "_id" : ObjectId("5b7e6bc46f4bbe8fc05e318c") }
+> db.student.remove( { "_id" : ObjectId("5b7e6bc46f4bbe8fc05e318c") } )
+WriteResult({ "nRemoved" : 1 })
+> db.student.save( { "_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318a"),"rollno":112,"name":"adi","mks":26 }  )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.find().pretty()
+{
+	"_id" : ObjectId("5b7e67076f4bbe8fc05e3186"),
+	"rollno" : 111,
+	"name" : "jim",
+	"mks" : 25
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318a"),
+	"rollno" : 112,
+	"name" : "adi",
+	"mks" : 26
+}
+{
+	"_id" : ObjectId("5b7e6a1a6f4bbe8fc05e318b"),
+	"rollno" : 113,
+	"name" : "adi",
+	"mks" : 30
+}
+> db.student.update( { "rollno":113 }, { $set: { "name":"bob" } }, { upsert: true } )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+

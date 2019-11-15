@@ -1,0 +1,10 @@
+On client Side
+
+copy  in home -mongodb-linux-x86_64-3.0.4.tgz
+& Extract
+Then type command
+
+
+[print16-17@projectlab1 ~]$ cd mongodb-linux-x86_64-3.0.4/bin/ 
+
+[TE1@localhost bin]$ ./mongo 10.10.11.42/te3177db -u te3177 -p te3177

@@ -1,0 +1,64 @@
+SQL> select * from n_emp;
+
+      SRNO     EMP_ID EMP_NAME		   POST
+---------- ---------- -------------------- --------------------
+	 1	 3177 divya		   MD
+	 2	 3178 tejas		   JS
+	 3	 3179 heena		   GM
+	 4	 3180 priya		   DD
+
+SQL> select * from o_emp;
+
+       EID ENAME		EPOST
+---------- -------------------- --------------------
+      3181 jim			MD
+      3178 tejas		JS
+      3182 joy			JS
+
+
+SQL> declare
+  2  newr n_emp%ROWTYPE;
+  3  oldr o_emp%ROWTYPE;
+  4  cursor cur_nemp is select * from n_emp;
+  5  cursor cur_oemp(e_id number) is select * from o_emp where eid = e_id;
+  6  begin
+  7  
+  8  open cur_nemp;
+  9  loop
+ 10   	fetch cur_nemp into newr;
+ 11   	exit when cur_nemp%NOTFOUND;
+ 12   	open cur_oemp (newr.emp_id);
+ 13    	fetch cur_oemp into oldr;
+ 14  	if cur_oemp%NOTFOUND then 
+ 15  	insert into o_emp values(newr.emp_id,newr.emp_name,newr.post);
+ 16   	end if;
+ 17  	close cur_oemp;
+ 18   end loop;
+ 19   close cur_nemp;
+ 20   end;
+ 21  /
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from n_emp;
+
+      SRNO     EMP_ID EMP_NAME		   POST
+---------- ---------- -------------------- --------------------
+	 1	 3177 divya		   MD
+	 2	 3178 tejas		   JS
+	 3	 3179 heena		   GM
+	 4	 3180 priya		   DD
+
+SQL> select * from o_emp;
+
+       EID ENAME		EPOST
+---------- -------------------- --------------------
+      3181 jim			MD
+      3178 tejas		JS
+      3182 joy			JS
+      3177 divya		MD
+      3179 heena		GM
+      3180 priya		DD
+
+6 rows selected.
+

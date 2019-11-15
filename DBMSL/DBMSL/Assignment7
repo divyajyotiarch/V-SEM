@@ -1,0 +1,82 @@
+SQL> CREATE TABLE customer07(cust_id number,cust_name varchar2(20),total_purchase number, constraint pk_cust_id primary key(cust_id));
+
+Table created.
+
+SQL> CREATE TABLE category07(cust_id number,cust_name varchar2(20),class_p varchar2(20),constraint fk_cust_id foreign key(cust_id) references customer07 (cust_id));
+
+Table created.
+
+SQL> insert all
+  2  into customer07 (cust_id,cust_name,total_purchase) values (101,'divya',25000)
+  3  into customer07 (cust_id,cust_name,total_purchase) values (103,'jim',9000)
+  4   into customer07 (cust_id,cust_name,total_purchase) values (104,'tom',15000)
+  5   into customer07 (cust_id,cust_name,total_purchase) values (102,'kim',4000)
+  6   into customer07 (cust_id,cust_name,total_purchase) values (110,'harry',5600)
+  7  select * from dual;
+
+
+SQL> select * from category07;
+
+   CUST_ID CUST_NAME		CLASS_P
+---------- -------------------- --------------------
+       102 kim
+       103 jim
+       104 tom
+       110 harry
+       101 divya
+
+SQL> select * from customer07;
+
+   CUST_ID CUST_NAME		TOTAL_PURCHASE
+---------- -------------------- --------------
+       101 divya			 25000
+       103 jim				  9000
+       104 tom				 15000
+       102 kim				  4000
+       110 harry			  5600
+
+
+SQL> CREATE OR REPLACE PROCEDURE proc_Grade(id IN NUMBER)
+  2  IS
+  3  tot_pur number(10);
+  4  c_id number(10);
+  5  c_name varchar2(20);
+  6  BEGIN
+  7   SELECT cust_id,cust_name,total_purchase INTO c_id,c_name,tot_pur from customer07 where cust_id=id;
+  8  IF tot_pur>20000 then
+  9   	insert into category07(cust_id,cust_name,class_p) values (c_id,c_name,'Diamond');
+ 10    ELSIF tot_pur<=20000 and tot_pur>=10000 THEN
+ 11     	insert into category07(cust_id,cust_name,class_p) values (c_id,c_name,'Platinum');
+ 12     ELSIF tot_pur<10000 and tot_pur>=5000 THEN
+ 13  	insert into category07(cust_id,cust_name,class_p) values (c_id,c_name,'Gold');
+ 14   ELSIF tot_pur<5000 THEN
+ 15   	insert into category07(cust_id,cust_name,class_p) values (c_id,c_name,'Silver');
+ 16  END IF;
+ 17  END;
+ 18  /
+
+Procedure created.
+
+SQL> CALL proc_Grade(101);
+
+Call completed.
+
+SQL> select * from category07;
+
+   CUST_ID CUST_NAME		CLASS_P
+---------- -------------------- --------------------
+       101 divya		Diamond
+
+SQL> CALL proc_Grade(103);
+
+Call completed.
+
+SQL> select * from category07;
+
+   CUST_ID CUST_NAME		CLASS_P
+---------- -------------------- --------------------
+       101 divya		Diamond
+       103 jim			Gold
+
+
+

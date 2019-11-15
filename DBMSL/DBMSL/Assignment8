@@ -1,0 +1,201 @@
+[TE1@localhost ~]$ su
+Password: 
+[root@localhost TE1]# /etc/init.d/oracle-xe restart
+Restarting oracle-xe (via systemctl):                      [  OK  ]
+[root@localhost TE1]# cd /u01/app/oracle/product/11.2.0/xe/bin
+[root@localhost bin]# . ./oracle_env.sh
+[root@localhost bin]# sqlplus system
+
+SQL*Plus: Release 11.2.0.2.0 Production on Wed Jul 18 13:10:30 2018
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+Enter password: 
+ERROR:
+ORA-28002: the password will expire within 1 days
+
+
+
+Connected to:
+Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production
+
+SQL> sqlplus system
+SP2-0734: unknown command beginning "sqlplus sy..." - rest of line ignored.
+SQL> show databases;
+SP2-0158: unknown SHOW option "databases"
+SQL> select * from student;
+
+    ROLLNO NAME 		DOA		PER
+---------- -------------------- -------- ----------
+	11 divya		01-07-15	 77
+	12 medha		30-06-15	 88
+	13 purwa		01-07-15	 78
+	14 saloni		01-07-15	 76
+	15 bhakti		30-06-15	 87
+
+SQL> describe student;
+ Name					   Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ ROLLNO 				   NOT NULL NUMBER(10)
+ NAME					   NOT NULL VARCHAR2(20)
+ DOA					   NOT NULL DATE
+ PER						    NUMBER(3)
+
+SQL> alter table student modify rollno number(10) primary key;
+
+Table altered.
+
+SQL> create table alumni (data varchar2(100));
+
+Table created.
+
+SQL> create or replace trigger tri_check before
+  2  insert or update or delete on student
+  3  for each row
+  4  begin
+  5  	if inserting then 
+  6  		insert into alumni values(user||'inserted student number'||:new.rollno||'at'||sysdate);
+  7  	elsif updating then
+  8  		insert into alumni values(user||'updated student number'||:new.rollno||'at'||sysdate);
+  9  	else
+ 10  		raise_application_error(-200,'cannot drop object');
+ 11  	end if;
+ 12  end;
+ 13  /
+
+Trigger created.
+
+SQL> drop trigger tri_check;
+
+Trigger dropped.
+
+SQL> select * from student;
+
+    ROLLNO NAME 		DOA		PER
+---------- -------------------- -------- ----------
+	17 divya		01-07-15	 77
+	12 medha		30-06-15	 88
+	13 purwa		01-07-15	 78
+	14 saloni		01-07-15	 76
+	15 bhakti		30-06-15	 87
+
+SQL> delete from alumni where rownum=1;
+
+1 row deleted.
+
+SQL> select * from alumni;
+
+DATA
+--------------------------------------------------------------------------------
+SYSTEM updated student with rollno 17 at 18-07-18
+
+SQL> insert into student (rollno,name,doa,per) values (19,'pooja',to_date('01/07/2015','DD/MM/YYYY'),89);
+
+1 row created.
+
+SQL> select * from alumni
+  2  ;
+
+DATA
+--------------------------------------------------------------------------------
+SYSTEM updated student with rollno 17 at 18-07-18
+SYSTEM inserted student with rollno 19 at 18-07-18
+
+SQL> create table alumni(srno number(10),data varchar2(100), constraint pk_srno primary key(srno));
+
+Table created.
+
+SQL> create sequence al_seq start with 1
+  2  increment by 1
+  3  minvalue 1
+  4  maxvalue 1000;
+
+Sequence created.
+
+SQL> create or replace trigger tri_stat before
+  2  insert or update or delete on student
+  3  for each row
+  4  begin
+  5  	if inserting then
+  6  		insert into alumni values (al_seq.nextval,user||' inserted student with rollno '||:new.rollno||' at '||systimestamp);
+  7  	elsif updating then 
+  8  		insert into alumni values (al_seq.nextval,user||' updated student with rollno '||:old.rollno||' at '||systimestamp);
+  9  	else
+ 10  		raise_application_error(-20050,'cannot drop object');
+ 11  	end if;
+ 12  end;
+ 13  /
+
+Trigger created.
+
+SQL> update student set rollno=11 where name = 'pooja';
+
+1 row updated.
+
+SQL> select * from alumni;
+
+      SRNO
+----------
+DATA
+--------------------------------------------------------------------------------
+	 1
+SYSTEM updated student with rollno 19 at 18-07-18 02:56:37.830092 PM +05:30
+
+
+SQL> delete from student where rollno=12;
+delete from student where rollno=12
+            *
+ERROR at line 1:
+ORA-20050: cannot drop object
+ORA-06512: at "SYSTEM.TRI_STAT", line 7
+ORA-04088: error during execution of trigger 'SYSTEM.TRI_STAT'
+
+SQL> select * from student
+  2  ;
+
+    ROLLNO NAME 		DOA		PER
+---------- -------------------- -------- ----------
+	17 divya		01-07-15	 77
+	12 medha		30-06-15	 88
+	13 purwa		01-07-15	 78
+	14 saloni		01-07-15	 76
+	15 bhakti		30-06-15	 87
+	11 pooja		01-07-15	 89
+
+6 rows selected.
+
+SQL> insert into student values(20,'nimisha',to_date('31/07/2016','DD/MM/YYYY'),68);
+
+1 row created.
+
+SQL> delete from student where name = 'purwa';
+delete from student where name = 'purwa'
+            *
+ERROR at line 1:
+ORA-20050: cannot drop object
+ORA-06512: at "SYSTEM.TRI_STAT", line 7
+ORA-04088: error during execution of trigger 'SYSTEM.TRI_STAT'
+
+
+SQL> update student set name='saniya' where per=78;  
+
+1 row updated.
+
+SQL> select * from alumni;
+
+      SRNO
+----------
+DATA
+--------------------------------------------------------------------------------
+	 1
+SYSTEM updated student with rollno 19 at 18-07-18 02:56:37.830092 PM +05:30
+
+	 2
+SYSTEM inserted student with rollno 20 at 19-07-18 01:09:07.629752 PM +05:30
+
+	 3
+SYSTEM updated student with rollno 13 at 19-07-18 01:10:46.744560 PM +05:30
+
+
+
+

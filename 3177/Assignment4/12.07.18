@@ -1,0 +1,150 @@
+MySQL [t3177db]> select * from prof natural join dept;
++---------+---------+------------+------------+---------+---------------+---------------------+-----------+-----------+
+| dept_id | prof_id | prof_fname | prof_lname | salary  | email         | designt             | city      | dept_name |
++---------+---------+------------+------------+---------+---------------+---------------------+-----------+-----------+
+|       1 |     101 | Ankita     | Kulkarni   | 1000000 | a.k@gmail.com | HOD                 | mumbai    | CE        |
+|       2 |     102 | Rakesh     | Sharma     | 1000000 | r.s@gmail.com | HOD                 | pune      | IT        |
+|       3 |     103 | Sunil      | Joshi      | 1000000 | r.s@gmail.com | HOD                 | bangalore | E&TC      |
+|       2 |     104 | Neha       | Kumar      |   50000 | n.k@gmail.com | Professor           | mumbai    | IT        |
+|       1 |     105 | Ranjeet    | Patil      |   55000 | r.p@gmail.com | Professor           | pune      | CE        |
+|       3 |     106 | Kiran      | Rajput     |   65000 | k.r@gmail.com | Professor           | chennai   | E&TC      |
+|       3 |     107 | Sahil      | Sharma     |   47250 | s.s@gmail.com | Professor           | mumbai    | E&TC      |
+|       2 |     108 | Kedar      | Sharma     |   36750 | k.s@gmail.com | Assistant Professor | chennai   | IT        |
+|       1 |     109 | Diksha     | Patil      |   35700 | d.p@gmail.com | Assistant Professor | pune      | CE        |
++---------+---------+------------+------------+---------+---------------+---------------------+-----------+-----------+
+9 rows in set (0.00 sec)
+
+MySQL [t3177db]> select prof_id,prof_fname from prof inner join shift where prof.prof_id=shift.prof_id;
+ERROR 1052 (23000): Column 'prof_id' in field list is ambiguous
+MySQL [t3177db]> show shift;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'shift' at line 1
+MySQL [t3177db]> select * from shift;
++---------+---------+-------------+
+| prof_id | shift_1 | working_hrs |
++---------+---------+-------------+
+|     101 |       1 |           9 |
+|     103 |       2 |           8 |
+|     102 |       2 |           8 |
+|     104 |       1 |           6 |
+|     105 |       2 |           7 |
+|     106 |       1 |           5 |
+|     107 |       2 |           6 |
+|     108 |       1 |           8 |
+|     109 |       1 |           7 |
++---------+---------+-------------+
+9 rows in set (0.00 sec)
+
+MySQL [t3177db]> select prof.prof_id,prof_fname,working_hrs,shift_1 from prof inner join shift on prof.prof_id=shift.prof_id;
++---------+------------+-------------+---------+
+| prof_id | prof_fname | working_hrs | shift_1 |
++---------+------------+-------------+---------+
+|     101 | Ankita     |           9 |       1 |
+|     103 | Sunil      |           8 |       2 |
+|     102 | Rakesh     |           8 |       2 |
+|     104 | Neha       |           6 |       1 |
+|     105 | Ranjeet    |           7 |       2 |
+|     106 | Kiran      |           5 |       1 |
+|     107 | Sahil      |           6 |       2 |
+|     108 | Kedar      |           8 |       1 |
+|     109 | Diksha     |           7 |       1 |
++---------+------------+-------------+---------+
+9 rows in set (0.00 sec)
+
+MySQL [t3177db]> select prof_fname,prof_lname,dept.dept_id,prof_id,dept_name from dept left join prof on dept.dept_id=prof.prof_id;
++------------+------------+---------+---------+-----------+
+| prof_fname | prof_lname | dept_id | prof_id | dept_name |
++------------+------------+---------+---------+-----------+
+| NULL       | NULL       |       1 |    NULL | CE        |
+| NULL       | NULL       |       2 |    NULL | IT        |
+| NULL       | NULL       |       3 |    NULL | E&TC      |
++------------+------------+---------+---------+-----------+
+3 rows in set (0.00 sec)
+
+MySQL [t3177db]> select prof_fname,prof_id,dept_name,dept.dept_id from prof right join dept on prof.dept_id=dept.dept_id;
++------------+---------+-----------+---------+
+| prof_fname | prof_id | dept_name | dept_id |
++------------+---------+-----------+---------+
+| Ankita     |     101 | CE        |       1 |
+| Ranjeet    |     105 | CE        |       1 |
+| Diksha     |     109 | CE        |       1 |
+| Rakesh     |     102 | IT        |       2 |
+| Neha       |     104 | IT        |       2 |
+| Kedar      |     108 | IT        |       2 |
+| Sunil      |     103 | E&TC      |       3 |
+| Kiran      |     106 | E&TC      |       3 |
+| Sahil      |     107 | E&TC      |       3 |
++------------+---------+-----------+---------+
+9 rows in set (0.00 sec)
+
+MySQL [t3177db]> select prof_name,dept_name,shift,salary from prof join dept on prof.dept_id=dept.dept_id JOIN shift on prof.prof_id=shift.prof_id and prof.prof_id=105;
+ERROR 1054 (42S22): Unknown column 'prof_name' in 'field list'
+MySQL [t3177db]> select prof_fname,dept_name,shift,salary from prof join dept on prof.dept_id=dept.dept_id JOIN shift on prof.prof_id=shift.prof_id and prof.prof_id=105;
+ERROR 1054 (42S22): Unknown column 'shift' in 'field list'
+MySQL [t3177db]> select prof_fname,dept_name,shift_1,salary from prof join dept on prof.dept_id=dept.dept_id JOIN shift on prof.prof_id=shift.prof_id and prof.prof_id=105;
++------------+-----------+---------+--------+
+| prof_fname | dept_name | shift_1 | salary |
++------------+-----------+---------+--------+
+| Ranjeet    | CE        |       2 |  55000 |
++------------+-----------+---------+--------+
+1 row in set (0.00 sec)
+
+MySQL [t3177db]> select count (prof_id) from prof join dept on prof.dept_id=dept.dept_id group by dept.dept_id;
+ERROR 1630 (42000): FUNCTION t3177db.count does not exist. Check the 'Function Name Parsing and Resolution' section in the Reference Manual
+MySQL [t3177db]> select count(prof_id) from prof join dept on prof.dept_id=dept.dept_id group by dept.dept_id;
++----------------+
+| count(prof_id) |
++----------------+
+|              3 |
+|              3 |
+|              3 |
++----------------+
+3 rows in set (0.02 sec)
+
+MySQL [t3177db]> select prof_id,prof_name from prof,dept where prof.dept_id=dept.dept_id and prof.dept_id=(select dept_id from dept where dept_name='CE');
+ERROR 1054 (42S22): Unknown column 'prof_name' in 'field list'
+MySQL [t3177db]> select prof_id,prof_fname from prof,dept where prof.dept_id=dept.dept_id and prof.dept_id=(select dept_id from dept where dept_name='CE');
++---------+------------+
+| prof_id | prof_fname |
++---------+------------+
+|     101 | Ankita     |
+|     105 | Ranjeet    |
+|     109 | Diksha     |
++---------+------------+
+3 rows in set (0.00 sec)
+
+MySQL [t3177db]> select dept_name from dept where dept_id = (select dept_id from prof where city='pune');
+ERROR 1242 (21000): Subquery returns more than 1 row
+MySQL [t3177db]> select dept_name from dept where dept_id = (select dept_id from prof where city='chennai');
+ERROR 1242 (21000): Subquery returns more than 1 row
+MySQL [t3177db]> select dept_name from dept where dept_id = (select dept_id from prof where city='bangalore');
++-----------+
+| dept_name |
++-----------+
+| E&TC      |
++-----------+
+1 row in set (0.00 sec)
+
+MySQL [t3177db]> create view prof_view as select prof_id,prof_fname,shift_1 from prof join shift on prof.prof_id=shift.prof_id; 
+ERROR 1052 (23000): Column 'prof_id' in field list is ambiguous
+MySQL [t3177db]> create view prof_view as select prof.prof_id,prof_fname,shift_1 from prof join shift on prof.prof_id=shift.prof_id; 
+Query OK, 0 rows affected (0.04 sec)
+
+MySQL [t3177db]> select * from prof_view;
++---------+------------+---------+
+| prof_id | prof_fname | shift_1 |
++---------+------------+---------+
+|     101 | Ankita     |       1 |
+|     103 | Sunil      |       2 |
+|     102 | Rakesh     |       2 |
+|     104 | Neha       |       1 |
+|     105 | Ranjeet    |       2 |
+|     106 | Kiran      |       1 |
+|     107 | Sahil      |       2 |
+|     108 | Kedar      |       1 |
+|     109 | Diksha     |       1 |
++---------+------------+---------+
+9 rows in set (0.00 sec)
+
+MySQL [t3177db]> delete from prof_view where prof_id=108;
+ERROR 1395 (HY000): Can not delete from join view 't3177db.prof_view'
+
